@@ -75,6 +75,16 @@ const UploadNNFTtoIPFS: React.FC = () => {
 
     }
 
+    const handleFileChange = (e: any) => {
+        const file = e.target.files[0];
+        if (file) {
+          setFileImg(file);
+        } else {
+          // Handle the case where no file is selected (optional)
+          console.error("No file selected");
+        }
+      };
+
     const sendFileToIPFS = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); 
 
@@ -116,7 +126,7 @@ const UploadNNFTtoIPFS: React.FC = () => {
         </form> */}
           <h1 className='flex justify-center items-center text-white mb-3 font-bold'>Upload File to IPFS and Mint Your Own NFT</h1>
           <form onSubmit={sendFileToIPFS} className="bg-black p-4 rounded-md border-2 border-#89CFF0 space-y-3">
-              <input type="file" onChange={(e) => setFileImg(e.target.files[0])} required />
+              <input type="file" onChange={handleFileChange} required />
               <input type="text" onChange={(e) => setName(e.target.value)} placeholder='name' style={{ marginRight: '1rem'}}  className="bg-black rounded-md border-2 border-#89CFF0 mt-2 p-2 rounded-md bg-dark border-blue-light focus:outline-none focus:border-blue" required value={name} />
               <input type="text" onChange={(e) => setDesc(e.target.value)} placeholder="desc" style={{ marginRight: '1rem' }}   className="bg-black rounded-md border-2 border-#89CFF0 mt-2 p-2 rounded-md border-gray-light focus:outline-none focus:border-blue" required value={desc} />
               <input type="text" onChange={(e) => setAddress(e.target.value)} placeholder="address" className="bg-black rounded-md border-2 border-#89CFF0 mt-2 p-2 rounded-md border-gray-light focus:outline-none focus:border-blue" required value={address} />
