@@ -19,7 +19,7 @@ export const MintProvider = ({ children }) => {
     
     const contractAddress = "0xc9Af3A414dE210ff45D09730360247cF10CafAaa"
     const contractABI = abi;
-    const { ethereum } = window;
+    //const { ethereum } = window;
 
 
     useEffect(() => {
