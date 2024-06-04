@@ -2,9 +2,9 @@
 import React, { useState } from 'react';
 import axios from 'axios'; 
 import { ethers } from "ethers";
-import abi from "../../../contracts/abi.json";
+// import abi from "../../../contracts/abi.json";
 import { useContext } from "react";
-import {MintContext} from '../../../contracts/interact'
+import {mintNFTFunc} from "./connector"
 
 const UploadNNFTtoIPFS: React.FC = () => {
     const [fileImg, setFileImg] = useState(null); 
@@ -13,20 +13,26 @@ const UploadNNFTtoIPFS: React.FC = () => {
     const [address, setAddress] = useState("")
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
-
-    const { MintContract, currentAccount, setTokenID } = useContext(MintContext)
+    
     const contractAddress = "0xc9Af3A414dE210ff45D09730360247cF10CafAaa"
-    const contractABI = abi;
-    // const { ethereum } = window;
+    // const contractABI = abi;
 
-        if (!MintContract) {
-            return <div>Loading...</div>;
-        }
+        // if (!MintContract) {
+        //     return <div>Loading...</div>;
+        // }
 
 
     const mintNFT = async (tokenURI: any) => {
         try {
-            await MintContract.safeMint(address, tokenURI)
+
+            await mintNFTFunc(address, tokenURI);
+            
+            // const provider = new ethers.providers.JsonRpcProvider("https://eth-sepolia.g.alchemy.com/v2/T_nFqTVHWTNvOE0BzBuT7JPJ82wXg07i");
+            // const signer = provider.getSigner();
+            // const MintContract = new ethers.Contract(contractAddress, contractABI, signer);
+
+            // console.log(MintContract)
+            // await MintContract.safeMint(address, tokenURI)
             setMessage('Minting successful!');
             setLoading(false);
             setFileImg(null);
@@ -113,7 +119,6 @@ const UploadNNFTtoIPFS: React.FC = () => {
             } catch (error) {
                 console.error('Error sending File to IPFS: ', error);
                 setLoading(false);
-
             }
         }
     };
@@ -124,7 +129,7 @@ const UploadNNFTtoIPFS: React.FC = () => {
             <input type="file" onChange={(e) => setFileImg(e.target.files ? e.target.files[0] : null)} required />
             <button type='submit'>Upload File to IPFS</button>
         </form> */}
-          <h1 className='flex justify-center items-center text-white mb-3 font-bold'>Upload File to IPFS and Mint Your Own NFT</h1>
+          <h1 className='flex justify-center items-center text-white p-5 mb-3 font-bold'>Upload File to IPFS and Mint Your Own NFT</h1>
           <form onSubmit={sendFileToIPFS} className="bg-black p-4 rounded-md border-2 border-#89CFF0 space-y-3">
               <input type="file" onChange={handleFileChange} required />
               <input type="text" onChange={(e) => setName(e.target.value)} placeholder='name' style={{ marginRight: '1rem'}}  className="bg-black rounded-md border-2 border-#89CFF0 mt-2 p-2 rounded-md bg-dark border-blue-light focus:outline-none focus:border-blue" required value={name} />
