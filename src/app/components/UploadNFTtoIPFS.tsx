@@ -5,6 +5,8 @@ import { ethers } from "ethers";
 // import abi from "../../../contracts/abi.json";
 import { useContext } from "react";
 import {mintNFTFunc} from "./connector"
+import { useAccount } from 'wagmi';
+
 
 const UploadNNFTtoIPFS: React.FC = () => {
     const [fileImg, setFileImg] = useState(null); 
@@ -13,6 +15,8 @@ const UploadNNFTtoIPFS: React.FC = () => {
     const [address, setAddress] = useState("")
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
+    //const { address } = useAccount();
+
     
     const contractAddress = "0xc9Af3A414dE210ff45D09730360247cF10CafAaa"
     // const contractABI = abi;
@@ -26,7 +30,6 @@ const UploadNNFTtoIPFS: React.FC = () => {
         try {
 
             await mintNFTFunc(address, tokenURI);
-            
             // const provider = new ethers.providers.JsonRpcProvider("https://eth-sepolia.g.alchemy.com/v2/T_nFqTVHWTNvOE0BzBuT7JPJ82wXg07i");
             // const signer = provider.getSigner();
             // const MintContract = new ethers.Contract(contractAddress, contractABI, signer);

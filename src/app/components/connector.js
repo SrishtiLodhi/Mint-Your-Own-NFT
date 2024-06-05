@@ -22,7 +22,11 @@ export const mintNFTFunc = async (address, tokenURI) => {
             const MintContract = new ethers.Contract(contractAddress, abi, signer);
  
             // Call the safeMint function from your contract
-            await MintContract.safeMint(address, tokenURI);
+            // await MintContract.safeMint(address, tokenURI);
+
+            await MintContract.safeMint(address, tokenURI , {
+                from: address
+              });
  
             console.log("NFT minted successfully!");
  
