@@ -1,10 +1,34 @@
 import { useWeb3Modal } from "@web3modal/react";
 import { useAccount, useDisconnect } from "wagmi";
 
+
 export const WalletConnect = () => {
-  const { open } = useWeb3Modal();
+  //const { open } = useWeb3Modal();
   const { address, chain } = useAccount();
-  const { disconnect } = useDisconnect();
+  //const { disconnect } = useDisconnect();
+
+   const open = async () => {
+    try { 
+        // Check if the window.ethereum object is available
+        if (typeof window.ethereum !== 'undefined') {
+            // Request account access if needed
+            await window.ethereum.request({ method: 'eth_accounts' });
+ 
+            // Create an ethers provider from window.ethereum
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            console.log("provider : ", provider);
+ 
+            // Get the signer from the provider
+            const signer = provider.getSigner();
+            console.log("signer : ", signer);
+ 
+        } else {
+            console.log("Ethereum provider not found. Install MetaMask.");
+        }
+    } catch (e) { 
+        console.log("Error : ", e);
+    }
+ }
 
   return (
     <div className="flex justify-end">
