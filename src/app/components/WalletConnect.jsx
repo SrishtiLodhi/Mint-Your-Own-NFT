@@ -1,65 +1,60 @@
-import { useWeb3Modal } from "@web3modal/react";
-import { useAccount, useDisconnect } from "wagmi";
-import { ethers } from "ethers";
+import { useState, useEffect } from "react";
+import { useConnectWallet } from "./useConnectWallet";
 
-export const WalletConnect = () => {
-  //const { open } = useWeb3Modal();
-  const { address, chain } = useAccount();
-  //const { disconnect } = useDisconnect();
+export function Wallet() {
+	const { account, requestAccount, connectStatus } = useConnectWallet();
 
-   const open = async () => {
-    try { 
-        // Check if the window.ethereum object is available
-        if (typeof window.ethereum !== 'undefined') {
-            // Request account access if needed
-            await window.ethereum.request({ method: 'eth_accounts' });
- 
-            // Create an ethers provider from window.ethereum
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            console.log("provider : ", provider);
- 
-            // Get the signer from the provider
-            const signer = provider.getSigner();
-            console.log("signer : ", signer);
- 
-        } else {
-            console.log("Ethereum provider not found. Install MetaMask.");
-        }
-    } catch (e) { 
-        console.log("Error : ", e);
-    }
- }
+	const [isLoading, setIsLoading] = useState(false);
+	const [errorMsg, setErrorMsg] = useState("");
 
-  return (
-    <div className="flex justify-end">
-      {address ? (
-        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-          <div
-            className="mtsemibold connectBtn bttn_ui me-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3"
-            style={{
-              fontSize: "small",
-              display: "inline-flex",
-              marginRight: "0.2rem",
-              alignSelf: "flex-start",
-            }}
-          >
-            {/* <Image src={`/${chain}.png`} alt={chain} width={16} height={16} /> */}
-            {address.substring(0, 4)}...{address.substring(address.length - 4)}
-          </div>
-          <button className="disconnectBtn" onClick={() => disconnect()}>
-            {/* <Image src="/Disconnect.svg" alt="Disconnect" width={16} height={16} /> */}
-          </button>
-        </div>
-      ) : (
-        <button
-          className="connectBtn hover connectPadding connect-wallet bttn_ui me-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3"
-          onClick={() => open()}
-        >
-          Connect Wallet
-        </button>
-      )}
-    </div>
-  );
-};
+	useEffect(() => {
+		if (connectStatus === "disconnected") {
+			setErrorMsg("");
+		}
+	}, [connectStatus]);
 
-export default WalletConnect;
+	const handleConnectWallet = async () => {
+		setIsLoading(true);
+		setErrorMsg("");
+
+		const result = await requestAccount();
+
+		setIsLoading(false);
+
+		if (!result.success) {
+			setErrorMsg(result.msg);
+		}
+	};
+
+	return (
+		<div className="flex justify-end items-center text-white p-3">
+			{connectStatus === "disconnected" && (
+				<div className="flex gap-4 bg-lightblue font-bold p-2 rounded-lg justify-center items-center">
+					{isLoading && <span className=" text-red-500">Loading...</span>}
+					{errorMsg && <span className="text-red-500">{errorMsg}</span>}
+					{!isLoading && !errorMsg && (
+						<button
+							className="bg-blue-600 font-semibold hover:bg-blue-700 text-white rounded-md font-medium uppercase p-2"
+							onClick={handleConnectWallet}
+						>
+							Connect
+						</button>
+					)}
+				</div>
+			)}
+
+			{connectStatus === "connecting" && (
+				<div className="text-center">Connecting...</div>
+			)}
+
+			{connectStatus === "connected" && (
+				<div className="flex items-center justify-between gap-4 text-green-600 font-medium text-uppercase border-2 border-green-600 rounded-md p-2">
+					<div>
+						{account ? `${account.slice(0, 5)}...${account.slice(-4)}` : ""}
+					</div>
+					<div>Connected</div>
+				</div>
+			)}
+		</div>
+	);
+}
