@@ -1,6 +1,6 @@
 import { useWeb3Modal } from "@web3modal/react";
 import { useAccount, useDisconnect } from "wagmi";
-
+import { ethers } from "ethers";
 
 export const WalletConnect = () => {
   //const { open } = useWeb3Modal();
